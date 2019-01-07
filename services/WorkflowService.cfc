@@ -44,18 +44,23 @@ component extends="preside.system.services.workflow.WorkflowService"{
 			} else {
 				$raiseError(e);
 				var statusMessage = !isEmpty( arguments.customiseErrorMessage ?: "" ) ? replace( arguments.customiseErrorMessage, "${errorMessage}", errorMessage, "all" ) : "Transaction error. Message: #errorMessage#";
-				if( !isEmpty( arguments.workflowId ?: "" ) ){
+				if( !isEmpty( arguments.workflowId ?: "" ) && _getStateDao().dataExists( id=arguments.workflowId ) ){
 					_getStateDao().updateData(
 						  id   = arguments.workflowId
 						, data = {
 							  locked        = true
-							, locked_reason = statusMessage
+							, locked_reason = errorMessage
 						}
 					);
+
+					var workflowDetail = _getStateDao().selectData(
+						  id  = arguments.workflowId
+					);
+
 					$createNotification(
 						  topic = "workflowTransactionFailed"
 						, type  = "info"
-						, data  = { workflowId=workflowId }
+						, data  = queryRowData( workflowDetail, 1 )
 					);
 				}
 
@@ -81,7 +86,7 @@ component extends="preside.system.services.workflow.WorkflowService"{
 				, useCache = arguments.useCache
 			);
 
-			if ( _hasStateExpired( record.expires ) && !( isBoolean( record.locked ?: "" ) && record.locked ) ) {
+			if ( _hasStateExpired( record.expires ) && !( _getBoolean( record.locked ?: "" ) ) ) {
 				complete( id=record.id );
 				return {};
 			}
@@ -95,7 +100,7 @@ component extends="preside.system.services.workflow.WorkflowService"{
 		return {};
 	}
 
-	public string function saveState(
+	public string function appendToState(
 		  required struct state
 		, required string status
 		,          string workflow   = ""
@@ -105,17 +110,47 @@ component extends="preside.system.services.workflow.WorkflowService"{
 		,          date   expires
 
 	) {
-		var isStateLocked   = isBoolean( arguments.state.locked ?: "" ) && arguments.state.locked;
+		var existingWf = getState( argumentCollection=arguments, useCache=false );
+		var newState   = existingWf.state ?: {};
+
+		newState.append( arguments.state );
+
+		return saveState( argumentCollection=arguments, state=newState, isLocked=_getBoolean( existingWf.locked ?: "" ) );
+	}
+
+	public string function saveState(
+		  required struct  state
+		, required string  status
+		,          string  workflow   = ""
+		,          string  reference  = ""
+		,          string  owner      = _getCookieBasedOwner()
+		,          string  id         = _getRecordIdByWorkflowNameReferenceAndOwner( arguments.workflow, arguments.reference, arguments.owner )
+		,          date    expires
+		,          string  isLocked   = ""
+
+	) {
+
 		var serializedState = SerializeJson( arguments.state );
 
-		if ( Len( Trim( arguments.id ) ) && !isStateLocked) {
-			_getStateDao().updateData(
-				  id   = arguments.id
-				, data = { state=serializedState, status=arguments.status, expires=arguments.expires ?: "" }
-			);
+		if ( Len( Trim( arguments.id ) ) ) {
+
+			if( !isEmpty( arguments.isLocked ?: "" ) ){
+				arguments.isLocked = _getStateDao().selectData(
+					  id           = arguments.id
+					, selectFields = ["locked"]
+				).locked;
+			}
+
+			if( !( _getBoolean( arguments.isLocked ?: "" ) ) ){
+				_getStateDao().updateData(
+					  id   = arguments.id
+					, data = { state=serializedState, status=arguments.status, expires=arguments.expires ?: "" }
+				);
+			}
 
 			return arguments.id;
 		}
+
 
 		return _getStateDao().insertData({
 			  state     = serializedState
@@ -126,5 +161,10 @@ component extends="preside.system.services.workflow.WorkflowService"{
 			, expires   = arguments.expires ?: ""
 		});
 	}
+
+	private boolean function _getBoolean( required booleanField ) {
+		return isBoolean( arguments.booleanField ?: "" ) &&  arguments.booleanField;
+	}
+
 
 }
