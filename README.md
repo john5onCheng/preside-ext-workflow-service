@@ -52,8 +52,12 @@ Make sure you only allow admin to run the re-commit handler method. You can add 
 
 ```
 <cfscript>
-if( !event.isAdminUser() ){
-	event.notFound();
+public function commitFinalizeBooking( event, rc, prc, args={} ) {
+	if( !event.isAdminUser() ){
+		event.notFound();
+	}
+
+	return eventBookingService.finalizeBooking( argumentCollection=rc ?: {} );
 }
 </cfscript>
 ```
