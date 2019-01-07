@@ -47,3 +47,13 @@ e.g.
 	
 </cfscript>
 ```
+
+Make sure you only allow admin to run the re-commit handler method. You can add more condition checking if you want to have higher secure.
+
+```
+<cfscript>
+if( !event.isAdminUser() ){
+	event.notFound();
+}
+</cfscript>
+```
