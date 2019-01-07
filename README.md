@@ -11,10 +11,10 @@ var result = workflowService.finalizeBooking( eventId=eventId );
 replace to 
 ```
 var result = workflowService.runTransaction(
-					  args                  = { eventId=eventId }
-					, eventName             = "page-types.event_booking_page._finalizeBooking"
-					, workflowID            = bookingProgress.id
-					, customiseErrorMessage = "Unable to book this event. Please contact web administrator. Transaction ID: #bookingProgress.id#"
+	  args                  = { eventId=eventId }
+	, eventName             = "page-types.event_booking_page._finalizeBooking"
+	, workflowID            = bookingProgress.id
+	, customiseErrorMessage = "Unable to book this event. Please contact web administrator. Transaction ID: #bookingProgress.id#"
 				);
 ```				
        
