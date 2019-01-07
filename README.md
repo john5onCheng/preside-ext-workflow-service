@@ -3,6 +3,16 @@ Preside workflow service enhancement extension
 
 This extension allow you to capture failed workflow transaction. Mark the workflow record to locked status and raise notification for developer to recommit this transaction.
 
+## Availble parameter for runTransaction method
+```
+eventName     : name of your private handler 
+maxRetry      : number of retry if dead lock error is happen
+sleepMiliSec  : amount of time to put this transaction into sleep in milisecond before it perform second attempt. This would reduce the chance to hit dead lock error when more than 1 transaction hit on same time.
+args          : arugment to pass in to your private handler 
+customiseErrorMessage : customise error message when transaction failed 
+workflowId    : Workflow record ID. To capture the workflow data when transaction failed.
+```
+
 ## Example of how to change your existng code
 ```
 var result = workflowService.finalizeBooking( eventId=eventId );
@@ -18,7 +28,7 @@ var result = workflowService.runTransaction(
 );
 ```				
        
-Create new method in handle name _finalizeBooking. example
+Create new private method in handle name _finalizeBooking. example
 ```
 private function _finalizeBooking( event, rc, prc, args={} ) {
 	return eventBookingService.finalizeBooking( argumentCollection=arguments.args ?: {} );
