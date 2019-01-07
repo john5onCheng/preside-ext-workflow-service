@@ -25,10 +25,11 @@ private function _finalizeBooking( event, rc, prc, args={} ) {
 }
 ```
 
-##Locked record
+## Locked record
+
 Modify your code to notify user if they have transaction locked, stop them from further changes on your form. You can get the `locked` status from workflow record new field.
 
-##Notification
+## Notification
 Override the nofification by adding conditional statement to create re-commit link. You can determine the workflow type from the captured data.
 
 e.g.
