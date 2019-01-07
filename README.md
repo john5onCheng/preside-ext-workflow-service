@@ -24,3 +24,26 @@ private function _finalizeBooking( event, rc, prc, args={} ) {
 	return eventBookingService.finalizeBooking( argumentCollection=arguments.args ?: {} );
 }
 ```
+
+##Locked record
+Modify your code to notify user if they have transaction locked, stop them from further changes on your form. You can get the `locked` status from workflow record new field.
+
+##Notification
+Override the nofification by adding conditional statement to create re-commit link. You can determine the workflow type from the captured data.
+
+e.g.
+```
+<cfscript>
+	switch( workflow ){
+		case "event_booking":
+			writeOutput('<a href="#event.buildlink( linkTo='page-types.event_booking_page.recommitEventBooking', queryString='workflowID=#id#')#"></a>')
+		break;
+
+		case "product_purchase":
+			writeOutput('<a href="#event.buildlink( linkTo='page-types.event_booking_page.recommitProductPurchase', queryString='workflowID=#id#')#"></a>')
+		break;
+		...
+	}
+	
+</cfscript>
+```
