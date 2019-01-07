@@ -15,7 +15,7 @@ var result = workflowService.runTransaction(
 	, eventName             = "page-types.event_booking_page._finalizeBooking"
 	, workflowID            = bookingProgress.id
 	, customiseErrorMessage = "Unable to book this event. Please contact web administrator. Transaction ID: #bookingProgress.id#"
-				);
+);
 ```				
        
 Create new method in handle name _finalizeBooking. example
