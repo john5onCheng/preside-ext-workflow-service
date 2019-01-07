@@ -72,3 +72,7 @@ public function commitFinalizeBooking( event, rc, prc, args={} ) {
 }
 </cfscript>
 ```
+
+## Modification on preisde workdflow service 
+1.) Locked record will not get deleted even it has expired when running getState() method
+2.) Locked record will not be saved when running saveState() method.
