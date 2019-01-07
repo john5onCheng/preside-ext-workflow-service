@@ -1,0 +1,25 @@
+{
+    "name":"PresideCMS Extension: Enhanced workflow service",
+    "type":"preside-extensions",
+    "version":"1.1.1",
+    "location":"https://github.com/john5oncheng/preside-ext-workflow-service/archive/v1.1.1.zip",
+    "author":"Johnson Cheng",
+    "directory":"application/extensions",
+    "homepage":"https://github.com/john5oncheng/preside-ext-workflow-service",
+    "documentation":"https://github.com/john5oncheng/preside-ext-workflow-service/wiki",
+    "repository":{
+        "type":"git",
+        "URL":"https://github.com/john5oncheng/preside-ext-workflow-service"
+    },
+    "bugs":"https://github.com/john5oncheng/preside-ext-workflow-service/issues",
+    "slug":"preside-ext-workflow-service",
+    "projectURL":"",
+    "ignore":[
+        ".git/*",
+        ".gitignore",
+        ".travis.yml",
+        ".twgit_features_subject",
+        "*.sh",
+        "docs"
+    ]
+}
